@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caza de Corazones</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom right, #ff758c, #ff7eb3);
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+        .container {
+            position: relative;
+            width: 90%;
+            height: 80%;
+            max-width: 600px;
+            max-height: 500px;
+        }
+        .heart {
+            position: absolute;
+            cursor: pointer;
+            font-size: 5vw; /* Tamaño relativo al tamaño de pantalla */
+            color: red;
+            display: none;
+        }
+        .message {
+            display: none;
+            font-size: 4vw;
+            color: white;
+            margin-top: 10px;
+        }
+        #finalQuestion {
+            display: none;
+            font-size: 6vw;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+            background-color: #ff4d7f;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 2s;
+        }
+        #instructions {
+            font-size: 5vw;
+            color: white;
+            margin-bottom: 20px;
+            animation: fadeIn 2s;
+        }
+        #responseButtons {
+            display: none; /* Ocultamos los botones al principio */
+            margin-top: 20px;
+        }
+        .responseButton {
+            font-size: 5vw;
+            padding: 12px 20px;
+            margin: 10px;
+            background-color: #ff4d7f;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .responseButton:hover {
+            background-color: #ff3366;
+        }
+        #loveMessage {
+            display: none;
+            font-size: 7vw;
+            color: white;
+            font-weight: bold;
+            animation: fadeIn 2s;
+            margin-top: 30px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="instructions">
+        Encuentra todos los corazones escondidos y descubre lo que siento por ti. ¡Haz clic o toca en ellos!
+    </div>
+    <div class="container" id="gameContainer">
+        <div class="heart" id="heart1">❤️</div>
+        <div class="heart" id="heart2">❤️</div>
+        <div class="heart" id="heart3">❤️</div>
+        <div class="heart" id="heart4">❤️</div>
+        <div class="heart" id="heart5">❤️</div>
+        <div class="message" id="message1">No sabia que el amor tenia tu rostro</div>
+        <div class="message" id="message2">Mi cafe favorito siempre sera el de tus ojos</div>
+        <div class="message" id="message3">Eres la salsa de mis tacos</div>
+        <div class="message" id="message4">Entre tantas coincidencias nos volvimos un destino</div>
+        <div class="message" id="message5">No se a donde voy pero se que te llevo conmigo</div>
+        <div id="finalQuestion">¿Quieres ser mi San Valentín Xime? </div>
+        <div id="responseButtons">
+            <button class="responseButton" id="yesButton">Sí</button>
+            <button class="responseButton" id="noButton">No</button>
+        </div>
+        <div id="loveMessage">Te amo <3 </div>
+    </div>
+
+    <script>
+        const hearts = document.querySelectorAll('.heart');
+        const messages = document.querySelectorAll('.message');
+        const finalQuestion = document.getElementById('finalQuestion');
+        const instructions = document.getElementById('instructions');
+        const container = document.getElementById('gameContainer');
+        const yesButton = document.getElementById('yesButton');
+        const noButton = document.getElementById('noButton');
+        const loveMessage = document.getElementById('loveMessage');
+        const responseButtons = document.getElementById('responseButtons');
+        let heartsFound = 0;
+
+        // Mensajes que se mostrarán cuando se haga clic en los corazones
+        const heartMessages = [
+            "No sabia que el amor tenia tu rostro ",
+            "Mi cafe favorito siempre sera el de tus ojos ",
+            "Eres la salsa de mis tacos",
+            "Entre tantas coincidencias nos volvimos un destino",
+            "No se a donde voy pero se que te llevo conmigo"
+        ];
+
+        // Mostrar los corazones después de que las instrucciones desaparezcan
+        setTimeout(() => {
+            instructions.style.display = "none"; // Ocultar instrucciones
+            setRandomPositions(); // Posiciones aleatorias después de las instrucciones
+            hearts.forEach(heart => heart.style.display = "block"); // Mostrar los corazones
+        }, 3000); // Esperar 3 segundos antes de comenzar
+
+        hearts.forEach((heart, index) => {
+            heart.addEventListener('click', () => {
+                messages[index].style.display = "block"; // Mostrar mensaje
+                setTimeout(() => {
+                    messages[index].style.display = "none"; // Ocultar mensaje después de un tiempo
+                    heart.style.display = "none"; // Ocultar el corazón
+                }, 2000); // 2 segundos para leer el mensaje
+                heartsFound++;
+                if (heartsFound === hearts.length) {
+                    setTimeout(() => {
+                        finalQuestion.style.display = "block"; // Mostrar la pregunta final
+                        responseButtons.style.display = "block"; // Mostrar botones después de la pregunta final
+                    }, 500);
+                }
+            });
+        });
+
+        // Función para establecer posiciones aleatorias dentro del contenedor sin que se salgan
+        function setRandomPositions() {
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+            const heartSize = 50; // Tamaño aproximado de cada corazón
+
+            hearts.forEach(heart => {
+                // Generar posiciones aleatorias pero asegurándonos de que no se salgan del contenedor
+                let x = Math.random() * (containerWidth - heartSize);
+                let y = Math.random() * (containerHeight - heartSize);
+                heart.style.left = `${x}px`;
+                heart.style.top = `${y}px`;
+            });
+        }
+
+        // Función para mover el botón "No" aleatoriamente
+        function moveNoButton() {
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+            const buttonSize = noButton.offsetWidth;
+            let randomX = Math.random() * (containerWidth - buttonSize);
+            let randomY = Math.random() * (containerHeight - buttonSize);
+            noButton.style.left = `${randomX}px`;
+            noButton.style.top = `${randomY}px`;
+        }
+
+        // Función para responder "Sí"
+        yesButton.addEventListener('click', () => {
+            loveMessage.style.display = "block"; // Mostrar "Te amo <3"
+        });
+
+        // Función para responder "No"
+        noButton.addEventListener('click', () => {
+            moveNoButton(); // Mover el botón "No"
+            yesButton.style.fontSize = "8vw"; // Hacer "Sí" más grande
+        });
+    </script>
+</body>
+</html>
+
+
